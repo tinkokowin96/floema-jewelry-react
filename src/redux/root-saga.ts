@@ -1,6 +1,6 @@
-import { all, call } from "redux-saga/effects";
-import { assetSaga } from "./assets/assets.saga";
+import { all, fork } from "redux-saga/effects";
+import { fetchAssetsStart } from "./assets/assets.saga";
 
 export default function* rootSaga() {
-	yield all([call(assetSaga)]);
+	yield all([fork(fetchAssetsStart)]);
 }
