@@ -8,11 +8,24 @@
     "@testing-library/user-event": "^12.8.3",
     "@types/jest": "^26.0.24",
     "@types/node": "^12.20.27",
+    "@types/prismic-dom": "^2.1.1",
     "@types/react": "^17.0.24",
     "@types/react-dom": "^17.0.9",
+    "@types/redux-logger": "^3.0.9",
+    "autoprefixer": "^10.3.6",
+    "postcss": "^8.3.8",
+    "prismic-dom": "^2.2.6",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-redux": "^7.2.5",
+    "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
+    "redux": "^4.1.1",
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^6.0.0",
+    "redux-saga": "^1.1.3",
+    "reselect": "^4.0.0",
+    "tailwindcss": "^2.2.16",
     "typescript": "^4.4.3",
     "web-vitals": "^1.1.2"
   },
@@ -39,5 +52,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-redux": "^7.1.18",
+    "@types/react-router-dom": "^5.3.0",
+    "@types/redux-persist": "^4.3.1",
+    "@types/redux-saga": "^0.10.5"
   }
 }
