@@ -4,7 +4,7 @@ export const fetchAssetsStart = () => ({
 	type: AssetsActionTypes.FETCH_ASSETS_START,
 });
 
-export const fetchAssetsSuccess = (assets: Object) => ({
+export const fetchAssetsSuccess = (assets: any) => ({
 	type: AssetsActionTypes.FETCH_ASSETS_SUCCESS,
 	payload: assets,
 });

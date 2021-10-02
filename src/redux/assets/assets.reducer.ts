@@ -4,7 +4,6 @@ const INITIAL_STATE = {
 	home: null,
 	about: null,
 	collections: null,
-	product: null,
 	isFetching: false,
 	errorMessage: undefined,
 };
@@ -20,12 +19,14 @@ const assetsReducer = (state = INITIAL_STATE, action: any) => {
 		case AssetsActionTypes.FETCH_ASSETS_SUCCESS:
 			return {
 				...state,
-				assets: action.payload,
+				...action.payload,
+				isFetching: false,
 			};
 
 		case AssetsActionTypes.FETCH_ASSETS_FAILURE:
 			return {
 				...state,
+				isFetching: false,
 				errorMessage: action.payload,
 			};
 
