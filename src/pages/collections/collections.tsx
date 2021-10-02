@@ -1,7 +1,19 @@
 //@ts-ignore
 const Collections = ({ collections }) => {
-  console.log(collections);
-  return <div>This is collection Page</div>;
+  if (collections) {
+    return Object.keys(collections).map((key, index) => (
+      <div key={index}>
+        <div> {key} </div>
+        <div>
+          {Object.keys(collections[key]).map((product) => {
+            const img = collections[key][product]["image"]["url"];
+            return <img src={img} alt="" key={product}></img>;
+          })}
+        </div>
+      </div>
+    ));
+  }
+  return <></>;
 };
 
 export default Collections;
