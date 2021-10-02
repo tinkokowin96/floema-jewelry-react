@@ -11,3 +11,13 @@ export const selectHome = createSelector(
 	[selectAssets],
 	(assets) => assets.home
 );
+
+export const selectAbout = createSelector(
+	[selectAssets],
+	(assets) => assets.about
+);
+
+export const selectCollections = createSelector(
+	[selectAssets],
+	(assets) => assets.collections
+);

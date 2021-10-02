@@ -1,14 +1,14 @@
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import LoadingWrapper from "../../components/loading.wrapper";
-import { selectHome, selectLoading } from "../../redux/assets/assets.selector";
-import Home from "./home";
+import { selectAbout, selectLoading } from "../../redux/assets/assets.selector";
+import About from "./about";
 
 const mapStateToProps = createStructuredSelector({
   isLoading: selectLoading,
-  collections: selectHome,
+  collections: selectAbout,
 });
 
-const HomeContainer = connect(mapStateToProps)(LoadingWrapper(Home));
+const AboutContainer = connect(mapStateToProps)(LoadingWrapper(About));
 
-export default HomeContainer;
+export default AboutContainer;

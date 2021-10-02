@@ -1,14 +1,11 @@
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
-import { selectHome } from "../../redux/assets/assets.selector";
-
-console.log("now on home....");
-const Home = ({ collections }: any) => {
-  return <div>{collections}</div>;
+//@ts-ignore
+const Home = ({ collections }) => {
+  if (collections) {
+    return collections.map((img: string) => (
+      <img key={img} src={img} alt=""></img>
+    ));
+  }
+  return <div></div>;
 };
 
-const mapStateToProps = createStructuredSelector({
-  collections: selectHome,
-});
-
-export default connect(mapStateToProps)(Home);
+export default Home;
