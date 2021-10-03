@@ -2,7 +2,6 @@ import { takeLatest, put } from "redux-saga/effects";
 import AssetsActionTypes from "./assets.types";
 import Prismic from "@prismicio/client";
 import { fetchAssetsFailure, fetchAssetsSuccess } from "./assets.actions";
-import { isEmpty } from "lodash";
 
 const API_ENDPOINT = "https://floemajewelrycms.prismic.io/api/v2";
 const API_KEY = "9da0d99b7a511943eca83a6479595542";
@@ -34,7 +33,7 @@ export function* fetchAssetsAsync() {
 		const about = yield Client.getSingle("about");
 		const aboutData = about.data;
 		const aboutRes: any = {
-			body: {},
+			body: [],
 		};
 		const aboutResGallery: Array<string> = [];
 
@@ -44,18 +43,12 @@ export function* fetchAssetsAsync() {
 
 		aboutRes.gallery = aboutResGallery;
 		aboutData.body.forEach((section: any) => {
-			const sectionObj: any = {};
-			const sectionItems = [];
-
-			if (!isEmpty(section.items[0])) {
-				for (let i = 0; i < section.items.length; i++) {
-					sectionItems.push(section.items[i].image.url);
-				}
+			if (section.slice_type === "gallery") {
+				const gallery: Array<string> = [];
+				section.items.forEach(({ image }: any) => gallery.push(image.url));
+				aboutRes.body.push(gallery);
 			}
-
-			sectionObj.items = sectionItems;
-			sectionObj.primary = section.primary;
-			aboutRes.body[section.slice_type] = sectionObj;
+			aboutRes.body.push(section);
 		});
 		payload.about = aboutRes;
 
