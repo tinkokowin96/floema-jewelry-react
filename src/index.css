@@ -7,7 +7,12 @@
     -ms-overflow-style: none; /* Internet Explorer 10+ */
     scrollbar-width: none; /* Firefox */
   }
+
   .body__container::-webkit-scrollbar {
     display: none; /* Safari and Chrome */
+  }
+
+  .clippy {
+    clip-path: circle(90% at 50% -170%);
   }
 }

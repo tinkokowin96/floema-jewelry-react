@@ -1,4 +1,4 @@
-import gsap from "gsap";
+import gsap, { Power3 } from "gsap";
 import { useRef } from "react";
 import { useHistory } from "react-router";
 
@@ -8,12 +8,33 @@ const Home = ({ collections }) => {
   const container = useRef(null);
   const transition = useRef(null);
   const redirectAbout = () => {
-    gsap.to(transition.current, {
-      scaleY: 1,
-      duration: 1,
-      transformOrigin: "bottom center",
-      onComplete: () => history.push("/about"),
+    const tl = gsap.timeline();
+    tl.set(container.current, {
+      pointerEvents: "none",
     });
+
+    tl.fromTo(
+      transition.current,
+      {
+        clipPath: "circle(90% at 50% -70%)",
+      },
+      {
+        clipPath: "circle(70% at 50% 30%)",
+        duration: 1,
+        ease: Power3.easeOut,
+      }
+    );
+
+    tl.to(
+      transition.current,
+      {
+        clipPath: "circle(150% at 50% 30%)",
+        duration: 1,
+        ease: "linear",
+        onComplete: () => history.push("/about"),
+      },
+      0.4
+    );
   };
 
   const redirectCollection = () => {
@@ -25,7 +46,7 @@ const Home = ({ collections }) => {
       <div>
         <div
           ref={transition}
-          className="fixed bg-red-500 h-screen w-screen top-0 left-0 z-10 transform scale-y-0"
+          className="fixed bg-red-500 h-full w-full z-10 clippy"
         ></div>
         <div ref={container}>
           <button onClick={redirectAbout}>About</button>
