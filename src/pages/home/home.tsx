@@ -12,7 +12,6 @@ const Home = ({ collections }) => {
       scaleY: 1,
       duration: 1,
       transformOrigin: "bottom center",
-      stagger: 0.3,
       onComplete: () => history.push("/about"),
     });
   };
