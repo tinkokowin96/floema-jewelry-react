@@ -2,7 +2,7 @@
 const Collections = ({ collections }) => {
   if (collections) {
     return Object.keys(collections).map((key, index) => (
-      <div key={index}>
+      <div>
         <div> {key} </div>
         <div>
           {Object.keys(collections[key]).map((product) => {
