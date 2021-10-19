@@ -28,7 +28,7 @@ const About = ({ collections, history }) => {
   });
 
   if (collections) {
-    console.log(collections);
+    // console.log(collections);
     const repeatSection = {
       gallery: 0,
       content: 0,

@@ -2,8 +2,12 @@ import Loading from "./loading";
 
 const LoadingWrapper = (WrappedComponent: any) => {
   //@ts-ignore
-  const Spinner = ({ isLoading, ...props }) => {
-    return isLoading ? <Loading /> : <WrappedComponent {...props} />;
+  const Spinner = ({ isLoading, collections }) => {
+    return isLoading || !collections ? (
+      <Loading />
+    ) : (
+      <WrappedComponent collections={collections} />
+    );
   };
   return Spinner;
 };

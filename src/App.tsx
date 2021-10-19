@@ -19,6 +19,7 @@ const App = ({ fetchAssetsStart }: any) => {
         <Route exact path="/about" component={AboutPage} />
         <Route exact path="/collections" component={CollectionsPage} />
         <Route path="/" component={HomePage} />
+        {/* <Route path="/" component={Test} /> */}
       </Switch>
     </>
   );
