@@ -3,16 +3,16 @@
 @tailwind utilities;
 
 @layer utilities {
-  .body__container,
+  /* .body__container,
   .scrollArea {
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; Internet Explorer 10+ 
+    scrollbar-width: none;  Firefox 
   }
 
   .body__container::-webkit-scrollbar,
   .scrollArea::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
-  }
+    display: none;  Safari and Chrome 
+  } */
 
   .clippy {
     clip-path: circle(90% at 50% -170%);
@@ -26,4 +26,8 @@
     height: 100vh;
     overflow: auto;
   }
+  /* .scroll:after {
+    height: 300%;
+    top: -100%;
+  } */
 }
