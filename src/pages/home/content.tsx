@@ -1,4 +1,4 @@
-import { GroupProps, useFrame, useLoader, useThree } from "@react-three/fiber";
+import { GroupProps, useLoader, useThree } from "@react-three/fiber";
 import { chunk, last } from "lodash";
 import React, { useRef, useEffect, SetStateAction } from "react";
 import { Mesh, TextureLoader } from "three";
@@ -16,10 +16,6 @@ const Content = ({
   const { viewport, size } = useThree();
   state.size = size;
   state.viewport = viewport;
-
-  let scrollUp = false;
-  let scrollDown = false;
-  let lastPos = 0;
 
   state.imgWidth = viewport.width / state.numColumn - state.gap;
   const imgWidth = state.imgWidth - state.gap / (state.numColumn + 1);
@@ -45,6 +41,7 @@ const Content = ({
     ((imgHeight + state.gap) * columns[0].length + state.gap) * state.pxPerUnit;
   state.page = state.galleryHeight / size.height;
   const galleryHeightVH = state.galleryHeight / state.pxPerUnit;
+  state.galleryHeightVH = galleryHeightVH;
 
   //768px - md breakpoint
   if (viewport.width <= state.breakpoint.md) {
@@ -54,145 +51,55 @@ const Content = ({
   }
 
   const gallery: any = [];
-  const galleryOriPosY: number[] = [];
+  const galleryPosY: number[] = [];
+  // let numImgInColumn = useRef<number>(0);
 
   useEffect(() => {
     if (group.current) {
+      //@ts-ignore
+      const numImgInColumn = group.current.children[0].children.length;
       //@ts-ignore
       group.current.children.forEach((mesh_group) => {
         mesh_group.children.forEach((mesh: any) => {
           mesh.isBeforeViewport = false;
           mesh.isAfterViewport = false;
           mesh.isBeforeViewport = false;
-          mesh.prevScrollPos = 0;
-          mesh.isScrollEnd = false;
-          mesh.prevScroll = 0;
-          mesh.isPosFreezed = false;
           mesh.newPos = 0;
-          mesh.prevState = null;
           mesh.stateChange = false;
           mesh.addNewPos = false;
-          mesh.activate = true;
+          mesh.prevState = null;
+
+          for (let i = 0; i < numImgInColumn; i++) {
+            mesh[i + 1] = false;
+          }
           gallery.push(mesh);
         });
       });
+
+      for (let i = 0; i < gallery.length; i += 5) {
+        for (let j = 0; j < numImgInColumn; j++) {
+          gallery[i + j][j + 1] = true;
+        }
+        gallery[i + numImgInColumn - 1].position.y = state.imgHeight;
+      }
     }
     state.gallery = gallery;
 
-    gallery.forEach((img: Mesh) => galleryOriPosY.push(img.position.y));
+    console.log(gallery[4], gallery[9], gallery[14]);
+
+    gallery.forEach((img: Mesh) => galleryPosY.push(img.position.y));
+
+    state.galleryPosY = galleryPosY;
+
+    state.galleryOriPosY = [...galleryPosY];
 
     reflow(state.page);
   });
 
-  useFrame(() => {
-    if (lastPos < state.top) {
-      scrollDown = true;
-      scrollUp = false;
-    }
-    if (lastPos > state.top) {
-      scrollDown = false;
-      scrollUp = true;
-    }
+  // useFrame(() => {
 
-    lastPos = state.top;
-
-    let scrolled = state.top / state.pxPerUnit;
-    const scrolledCpy = scrolled;
-
-    if (gallery.length > 0) {
-      // gallery.forEach((img: any, ind: number) => {
-      const img = gallery[2];
-
-      img.isBeforeViewport = img.position.y - imgHeight > 0;
-      img.isAfterViewport = img.position.y < -viewport.height;
-
-      const currentState = img.isBeforeViewport
-        ? "before"
-        : img.isAfterViewport
-        ? "after"
-        : "inside";
-
-      console.log(
-        img.isBeforeViewport,
-        img.isAfterViewport,
-        currentState,
-        img.position.y
-      );
-
-      if (img.prevScrollPos === scrolledCpy) {
-        scrolled = 0;
-        img.isScrollEnd = true;
-        if (!img.isPosFreezed) {
-          img.prevScroll = img.position.y;
-          img.isPosFreezed = true;
-        }
-      } else {
-        img.isScrollEnd = false;
-        img.isPosFreezed = false;
-      }
-
-      if (currentState !== img.prevState) {
-        img.stateChange = true;
-      } else {
-        img.stateChange = false;
-      }
-
-      const scroll = viewport.height - galleryOriPosY[2] - scrolled;
-      img.prevScrollPos = scrolledCpy;
-
-      if (scrollDown && img.isBeforeViewport && img.stateChange) {
-        console.log("down entered again...");
-        console.log(`down before ${img.newPos}`);
-        img.newPos -= galleryHeightVH;
-        console.log(`newPos from down->${img.newPos}`);
-        img.isBeforeViewport = false;
-        img.isAfterViewport = false;
-        img.prevState = currentState;
-        img.addNewPos = true;
-        img.activate = false;
-      }
-
-      if (scrollUp && img.isAfterViewport && img.stateChange) {
-        console.log("up enter again");
-        console.log(`up before ${img.newPos}`);
-        img.newPos += galleryHeightVH;
-        console.log(`newPos from up->${img.newPos}`);
-        img.isBeforeViewport = false;
-        img.isAfterViewport = false;
-        img.prevState = currentState;
-        img.addNewPos = true;
-        img.activate = false;
-      }
-
-      if (currentState === "inside") {
-        img.deactivateToggle = false;
-        img.activate = true;
-      }
-
-      if (!img.isScrollEnd && img.activate) {
-        img.position.setY(viewport.height - scroll);
-      }
-
-      if (
-        img.isScrollEnd ||
-        currentState === "before" ||
-        currentState === "after"
-      ) {
-        img.position.setY(img.prevScroll);
-      }
-
-      if (img.addNewPos) {
-        img.position.setY(galleryOriPosY[2] + img.newPos);
-        // console.log(galleryOriPosY[2], img.newPos, img.position.y);
-        img.addNewPos = false;
-        galleryOriPosY[2] -= galleryHeightVH;
-        img.prevScroll = img.position.y;
-      }
-      // });
-
-      // img.position.y += 0.001;
-    }
-  });
+  //     // img.position.y += 0.001;
+  // });
   return (
     <group ref={group}>
       {columns.map((col, col_ind) => {
