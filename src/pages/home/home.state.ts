@@ -1,9 +1,5 @@
 const gallery: any = []
-const galleryPosY: number[] = []
-const galleryOriPosY: number[] = []
 const debugChunk: any = []
-const firstColumnIndex: number[] = []
-const firstColumnIndexOri: number[] = []
 
 export const state = {
 	top: 0,
@@ -20,13 +16,9 @@ export const state = {
 
 	galleryHeight: 0,
 	gallery,
-	galleryPosY,
-	galleryOriPosY,
 	galleryHeightVH: 0,
 	galleryStartPos: 0,
 	galleryEndPos: 0,
-	firstColumnIndex,
-	firstColumnIndexOri,
 	debugChunk,
 
 	size: { width: 1909, height: 999 },

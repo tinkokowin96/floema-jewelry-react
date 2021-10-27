@@ -1,7 +1,7 @@
 import { GroupProps, useLoader, useThree } from "@react-three/fiber"
 import { chunk, last, round } from "lodash"
 import React, { useRef, useEffect, SetStateAction } from "react"
-import { Mesh, TextureLoader } from "three"
+import { TextureLoader } from "three"
 import { state } from "./home.state"
 
 const Content = ({
@@ -54,10 +54,6 @@ const Content = ({
   }
 
   const gallery: any = []
-  const galleryPosY: number[] = []
-  const firstColumnIndex: number[] = []
-  const galleryPosYCol: number[] = []
-  let colIndex = 0
 
   useEffect(() => {
     if (group.current) {
@@ -66,12 +62,6 @@ const Content = ({
       //@ts-ignore
       group.current.children.forEach((mesh_group) => {
         mesh_group.children.forEach((mesh: any) => {
-          mesh.isBeforeViewport = false
-          mesh.isAfterViewport = false
-          mesh.isBeforeViewport = false
-          mesh.prevPos = mesh.position.y
-          mesh.prevWithinViewport = false
-
           for (let i = 0; i < state.numImgInColumn; i++) {
             mesh[i] = false
           }
@@ -81,41 +71,15 @@ const Content = ({
     }
 
     for (let i = 0; i < gallery.length; i += 5) {
-      for (let j = 0; j < state.numImgInColumn; j++) {
-        gallery[i + j][j] = true
-        gallery[i + j]["column"] = colIndex
-      }
       gallery[i + state.numImgInColumn - 1].position.y = state.imgHeight
-      colIndex++
     }
-
-    for (let i = 0; i < state.numColumn; i++) {
-      firstColumnIndex.push(i * state.numImgInColumn)
-    }
-
-    for (let i = 0; i < state.numImgInColumn; i++) {
-      galleryPosYCol.push(gallery[i].position.y)
-    }
-
-    gallery.forEach((img: Mesh) => galleryPosY.push(img.position.y))
 
     state.galleryStartPos = gallery[state.numImgInColumn - 1].position.y
     state.galleryEndPos = gallery[state.numImgInColumn - 2].position.y
 
     state.gallery = gallery
 
-    state.firstColumnIndex = firstColumnIndex
-
-    state.firstColumnIndexOri = [...firstColumnIndex]
-
     state.debugChunk = chunk(gallery, 5)[0]
-
-    state.galleryPosY = [...galleryPosY]
-
-    state.galleryOriPosY = [...galleryPosY]
-
-    // console.log(gallery)
-    // console.log(galleryPosY)
 
     reflow(state.page)
   })
