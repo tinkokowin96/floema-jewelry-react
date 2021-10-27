@@ -1,0 +1,12 @@
+{
+  "semi": false,
+  "bracketSameLine": true,
+  "overrides": [
+    {
+      "files": "src/pages/home/scroll.ts",
+      "options": {
+        "printWidth": 120
+      }
+    }
+  ]
+}
