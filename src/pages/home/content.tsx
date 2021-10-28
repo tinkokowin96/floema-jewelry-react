@@ -2,7 +2,28 @@ import { GroupProps, useLoader, useThree } from "@react-three/fiber"
 import { chunk, last, round } from "lodash"
 import React, { useRef, useEffect, SetStateAction } from "react"
 import { TextureLoader } from "three"
-import { state } from "./home.state"
+import { clampPos } from "../../utils/utils"
+import { homeState } from "./home.state"
+
+/*
+FIXME:
+  to fix awkward position after scroll and resize...
+*/
+
+let prevScroll = 0
+
+export const scrollMe = () => {
+  homeState.gallery.forEach((img: any) => {
+    // homeState.debugChunk.forEach((img: any) => {
+    if (homeState.scroll < -3 || homeState.scroll > 3) {
+      homeState.scroll = prevScroll
+    }
+
+    const scrolled = clampPos(round(img.position.y + homeState.scroll, 4))
+    img.position.setY(scrolled)
+    prevScroll = homeState.scroll
+  })
+}
 
 const Content = ({
   reflow,
@@ -14,22 +35,26 @@ const Content = ({
   const group = useRef<GroupProps>(null)
 
   const { viewport, size } = useThree()
-  state.size = size
-  state.viewport = viewport
+  homeState.size = size
+  homeState.viewport = viewport
 
-  state.imgWidth = round(viewport.width / state.numColumn - state.gap, 4)
-  const imgWidth = state.imgWidth - state.gap / (state.numColumn + 1)
-  const imgHeight = round(imgWidth * state.aspect, 4)
-  state.imgHeight = imgHeight
+  homeState.imgWidth = round(
+    viewport.width / homeState.numColumn - homeState.gap,
+    4
+  )
+  const imgWidth =
+    homeState.imgWidth - homeState.gap / (homeState.numColumn + 1)
+  const imgHeight = round(imgWidth * homeState.aspect, 4)
+  homeState.imgHeight = imgHeight
 
   let offsetX = viewport.width / 2 - imgWidth / 2
   let offsetY = viewport.height / 2 - imgHeight / 2
 
-  const gapX = state.gap + imgWidth
-  const gapY = state.gap + imgHeight
+  const gapX = homeState.gap + imgWidth
+  const gapY = homeState.gap + imgHeight
 
   const textures = useLoader(TextureLoader, collections)
-  const numColumn = Math.floor(textures.length / state.numColumn)
+  const numColumn = Math.floor(textures.length / homeState.numColumn)
   const columns = chunk(textures, numColumn)
   const lastColumn = last(columns)
   if (lastColumn?.length !== columns[0].length) {
@@ -37,20 +62,20 @@ const Content = ({
     columns.pop()
   }
 
-  state.galleryHeight = round(
-    ((imgHeight + state.gap) * (columns[0].length - 1) + state.gap) *
-      state.pxPerUnit,
+  homeState.galleryHeight = round(
+    ((imgHeight + homeState.gap) * (columns[0].length - 1) + homeState.gap) *
+      homeState.pxPerUnit,
     4
   )
-  state.page = state.galleryHeight / size.height
-  const galleryHeightVH = state.galleryHeight / state.pxPerUnit
-  state.galleryHeightVH = galleryHeightVH
+  homeState.page = homeState.galleryHeight / size.height
+  const galleryHeightVH = homeState.galleryHeight / homeState.pxPerUnit
+  homeState.galleryHeightVH = galleryHeightVH
 
   //768px - md breakpoint
-  if (viewport.width <= state.breakpoint.md) {
-    state.numColumn = 2
-  } else if (viewport.width > state.breakpoint.md) {
-    state.numColumn = 5
+  if (viewport.width <= homeState.breakpoint.md) {
+    homeState.numColumn = 2
+  } else if (viewport.width > homeState.breakpoint.md) {
+    homeState.numColumn = 5
   }
 
   const gallery: any = []
@@ -58,11 +83,11 @@ const Content = ({
   useEffect(() => {
     if (group.current) {
       //@ts-ignore
-      state.numImgInColumn = group.current.children[0].children.length
+      homeState.numImgInColumn = group.current.children[0].children.length
       //@ts-ignore
       group.current.children.forEach((mesh_group) => {
         mesh_group.children.forEach((mesh: any) => {
-          for (let i = 0; i < state.numImgInColumn; i++) {
+          for (let i = 0; i < homeState.numImgInColumn; i++) {
             mesh[i] = false
           }
           gallery.push(mesh)
@@ -71,38 +96,39 @@ const Content = ({
     }
 
     for (let i = 0; i < gallery.length; i += 5) {
-      gallery[i + state.numImgInColumn - 1].position.y = state.imgHeight
+      gallery[i + homeState.numImgInColumn - 1].position.y = homeState.imgHeight
     }
 
-    state.galleryStartPos = gallery[state.numImgInColumn - 1].position.y
-    state.galleryEndPos = gallery[state.numImgInColumn - 2].position.y
+    homeState.galleryStartPos = gallery[homeState.numImgInColumn - 1].position.y
+    homeState.galleryEndPos = gallery[homeState.numImgInColumn - 2].position.y
 
-    state.gallery = gallery
+    homeState.gallery = gallery
 
-    state.debugChunk = chunk(gallery, 5)[0]
+    homeState.debugChunk = chunk(gallery, 5)[0]
 
-    reflow(state.page)
+    reflow(homeState.page)
   })
 
   // useFrame(() => {
+  //   homeState.scroll = 0.03
+  //   scrollMe()
+  // })
 
-  //     // img.position.y += 0.001;
-  // });
   return (
     <group ref={group}>
       {columns.map((col, col_ind) => {
         const groupGapX = gapX * col_ind
         if (col_ind === 0) {
-          offsetX -= state.gap
+          offsetX -= homeState.gap
         }
         return (
           <group
             key={`col_${col_ind}`}
             position={[-offsetX + groupGapX, offsetY, 0]}>
             {col.map((tex, tex_ind) => {
-              let meshGap = gapY * tex_ind + state.gap
+              let meshGap = gapY * tex_ind + homeState.gap
               if (tex_ind === 0) {
-                meshGap = state.gap
+                meshGap = homeState.gap
               }
               return (
                 <mesh

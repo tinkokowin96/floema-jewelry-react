@@ -3,17 +3,20 @@
 @tailwind utilities;
 
 @layer utilities {
-  /* .body__container,
-  .scrollArea {
-    -ms-overflow-style: none; Internet Explorer 10+ 
-    scrollbar-width: none;  Firefox 
+  * {
+    box-sizing: border-box;
   }
 
-  .body__container::-webkit-scrollbar,
-  .scrollArea::-webkit-scrollbar {
-    display: none;  Safari and Chrome 
-  } */
-
+  html,
+  body,
+  #root {
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+  }
   .clippy {
     clip-path: circle(90% at 50% -170%);
   }
@@ -22,12 +25,8 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     overflow: auto;
   }
-  /* .scroll:after {
-    height: 300%;
-    top: -100%;
-  } */
 }

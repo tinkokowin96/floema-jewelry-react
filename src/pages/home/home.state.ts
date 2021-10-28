@@ -1,7 +1,7 @@
 const gallery: any = []
 const debugChunk: any = []
 
-export const state = {
+export const homeState = {
 	top: 0,
 	scroll: 0,
 	scrollDir: "down",

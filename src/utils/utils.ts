@@ -1,17 +1,11 @@
-import { state } from "../pages/home/home.state"
+import { homeState } from "../pages/home/home.state"
 
 export function clampPos(position: number) {
-	if (position > state.galleryStartPos) {
-		return state.galleryEndPos + position - state.galleryStartPos
+	if (position > homeState.galleryStartPos) {
+		return homeState.galleryEndPos + position - homeState.galleryStartPos
 	}
-	if (position < state.galleryEndPos) {
-		console.log(
-			"scroll up time....",
-			position,
-			state.galleryEndPos,
-			state.galleryStartPos + (position - state.galleryEndPos)
-		)
-		return state.galleryStartPos + (position - state.galleryEndPos)
+	if (position < homeState.galleryEndPos) {
+		return homeState.galleryStartPos + (position - homeState.galleryEndPos)
 	} else {
 		return position
 	}
