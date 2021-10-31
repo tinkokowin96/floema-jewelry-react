@@ -3,6 +3,7 @@ import gsap, { Power3 } from "gsap"
 import { round } from "lodash"
 import React, { Suspense, useEffect, useRef, useState } from "react"
 import { useHistory } from "react-router"
+import Button from "../../assets/button.svg"
 import Content, { scrollMe } from "./content"
 import { homeState } from "./home.state"
 
@@ -91,7 +92,7 @@ const Home = ({ collections }: { collections: Array<string> }) => {
 
   return (
     <div className="relative">
-      <div ref={container} className="bg-gray-300 w-full h-full">
+      <div ref={container} className="bg-home w-full h-full">
         <Canvas
           ref={canvas}
           dpr={[1, 2]}
@@ -117,14 +118,47 @@ const Home = ({ collections }: { collections: Array<string> }) => {
         <div
           ref={transition}
           className=" bg-red-500 h-screen w-screen z-20 clippy"></div>
+      </div>
 
-        <div
-          ref={container}
-          className="absolute top-0 z-10 pointer-events-auto">
-          <button onClick={redirectAbout}>About</button>
-          <button onClick={redirectCollection}>Collections</button>
+      <button className="absolute top-0 right-5 group" onClick={redirectAbout}>
+        <h4 className="text-white text-center font-dosis text-xl">About</h4>
+        <div className="w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition duration-500"></div>
+      </button>
+
+      <div className="collections absolute bottom-9 left-1/2 transform -translate-x-1/2 rotate-180 pointer-events-none">
+        <div>
+          <h2>Vita</h2>
+          <p>
+            Collection <br />
+            One
+          </p>
+        </div>
+        <div>
+          <h2>Treccia</h2>
+          <p>
+            Collection <br />
+            Two
+          </p>
+        </div>
+        <div>
+          <h2>Onde</h2>
+          <p>
+            Collection <br />
+            Three
+          </p>
+        </div>
+        <div>
+          <h2>Aria</h2>
+          <p>
+            Collection <br />
+            Four
+          </p>
         </div>
       </div>
+
+      <button onClick={redirectCollection}>
+        <Button />
+      </button>
     </div>
   )
 }

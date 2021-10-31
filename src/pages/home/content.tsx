@@ -13,15 +13,39 @@ FIXME:
 let prevScroll = 0
 
 export const scrollMe = () => {
-  homeState.gallery.forEach((img: any) => {
-    // homeState.debugChunk.forEach((img: any) => {
+  let dirStateChange = false
+  homeState.gallery.forEach((img: any, ind: number) => {
+    // homeState.debugChunk.forEach((img: any, ind: number) => {
+    if (homeState.scrollDir !== homeState.prevScrollDir) {
+      dirStateChange = true
+    }
+
     if (homeState.scroll < -3 || homeState.scroll > 3) {
       homeState.scroll = prevScroll
     }
 
-    const scrolled = clampPos(round(img.position.y + homeState.scroll, 4))
+    console.log(
+      ind,
+      "is added ->",
+      img.addedFromOut,
+      "state change->",
+      dirStateChange,
+      "scrollDir ->",
+      homeState.scrollDir,
+      img.position.y
+    )
+    const scrolled = clampPos(
+      ind,
+      round(img.position.y + homeState.scroll, 4),
+      img.addedFromOut,
+      img,
+      dirStateChange,
+      homeState.scrollDir
+    )
+    // console.log(ind, "got this from clamp..", scrolled, img.addedFromOut)
     img.position.setY(scrolled)
     prevScroll = homeState.scroll
+    homeState.prevScrollDir = homeState.scrollDir
   })
 }
 
@@ -88,11 +112,17 @@ const Content = ({
       group.current.children.forEach((mesh_group) => {
         mesh_group.children.forEach((mesh: any) => {
           for (let i = 0; i < homeState.numImgInColumn; i++) {
-            mesh[i] = false
+            mesh["addedFromOut"] = false
+            mesh["prevScroll"] = 0
           }
           gallery.push(mesh)
         })
       })
+    }
+
+    if (homeState.galleryEndAddPos === 0) {
+      homeState.galleryEndAddPos =
+        gallery[homeState.numImgInColumn - 1].position.y
     }
 
     for (let i = 0; i < gallery.length; i += 5) {
@@ -100,6 +130,8 @@ const Content = ({
     }
 
     homeState.galleryStartPos = gallery[homeState.numImgInColumn - 1].position.y
+    homeState.galleryStartAddPos =
+      homeState.galleryStartPos + homeState.gap + homeState.imgHeight
     homeState.galleryEndPos = gallery[homeState.numImgInColumn - 2].position.y
 
     homeState.gallery = gallery
@@ -135,7 +167,12 @@ const Content = ({
                   key={`col_${col_ind}_tex_${tex_ind}`}
                   position={[0, -meshGap, 0]}>
                   <planeBufferGeometry args={[imgWidth, imgHeight]} />
-                  <meshBasicMaterial map={tex} toneMapped={false} />
+                  <meshBasicMaterial
+                    map={tex}
+                    toneMapped={false}
+                    transparent
+                    opacity={0.4}
+                  />
                 </mesh>
               )
             })}

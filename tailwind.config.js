@@ -7,10 +7,16 @@ module.exports = {
       colors: {
         home: "#c97164",
       },
+      fontFamily: {
+        zen_kurenaido: ["Zen Kurenaido", "sans-serif"],
+        dosis: ["Dosis", "sans-serif"],
+      },
     },
   },
   variants: {
-    extend: {},
+    extend: {
+      scale: ["group-hover"],
+    },
   },
   plugins: [],
-};
+}

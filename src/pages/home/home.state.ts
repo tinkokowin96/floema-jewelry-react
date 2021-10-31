@@ -5,6 +5,7 @@ export const homeState = {
 	top: 0,
 	scroll: 0,
 	scrollDir: "down",
+	prevScrollDir: "down",
 
 	page: 0,
 	numColumn: 5,
@@ -18,7 +19,9 @@ export const homeState = {
 	gallery,
 	galleryHeightVH: 0,
 	galleryStartPos: 0,
+	galleryStartAddPos: 0,
 	galleryEndPos: 0,
+	galleryEndAddPos: 0,
 	debugChunk,
 
 	size: { width: 1909, height: 999 },
