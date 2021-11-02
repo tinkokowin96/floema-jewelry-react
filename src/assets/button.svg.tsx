@@ -13,7 +13,7 @@ const Button = () => (
             stroke-width: 0.5px;
             stroke-dasharray: 200;
             stroke-dashoffset: 200;
-			transition: 0.4s linear;
+            transition: 0.4s linear;
           }
           .btn-path {
             fill: none;
@@ -21,10 +21,12 @@ const Button = () => (
             stroke-width: 0.5px;
           }
           .button-text {
-            font: 30% Dosis;
+            font: 25% Dosis;
             fill: white;
-			transform-origin: center;
-			transition: 0.4s linear;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            transform-origin: center;
+            transition: 0.4s linear;
           }`}
       </style>
     </defs>
@@ -43,7 +45,7 @@ const Button = () => (
 
     <text
       x="50%"
-      y="50%"
+      y="54%"
       className="button-text"
       dominantBaseline="middle"
       textAnchor="middle">

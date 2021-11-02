@@ -4,13 +4,14 @@ import { round } from "lodash"
 import React, { Suspense, useEffect, useRef, useState } from "react"
 import { useHistory } from "react-router"
 import Button from "../../assets/button.svg"
-import Content, { scrollMe } from "./content"
+import { canvasScroll } from "../../utils/utils"
+import Content from "./content"
 import { homeState } from "./home.state"
 
 const Home = ({ collections }: { collections: Array<string> }) => {
+  const history = useHistory()
   const scrollArea = useRef<HTMLDivElement>(null)
   const canvas = useRef(null)
-  const history = useHistory()
   const container = useRef(null)
   const transition = useRef(null)
 
@@ -51,6 +52,54 @@ const Home = ({ collections }: { collections: Array<string> }) => {
   useEffect(() => {
     const ele = scrollArea.current as Element
     ele.scrollTop = ele.scrollHeight / 2 - ele.clientHeight
+
+    // console.log(window.innerWidth)
+    const stagger = 0.25
+    const duration = 1
+    const cols = gsap.utils.toArray(".col-item")
+
+    const loop = gsap.timeline({
+      paused: true,
+      repeat: -1,
+    })
+
+    const shift = [...cols, ...cols, ...cols]
+
+    shift.forEach((col: any, index) => {
+      const tl = gsap.timeline().fromTo(
+        col,
+        {
+          y: 0,
+        },
+        {
+          y: "150vw",
+          // y: "300%",
+          duration: 1,
+          ease: "none",
+          immediateRender: false,
+        },
+        0
+      )
+
+      loop.add(tl, index * stagger)
+    })
+
+    const cycleDuration = stagger * cols.length
+    const startTime = cycleDuration + duration * 0.2
+    const endTime = startTime + cycleDuration
+
+    gsap.fromTo(
+      loop,
+      {
+        totalTime: startTime,
+      },
+      {
+        totalTime: endTime,
+        duration: 15,
+        ease: "none",
+        repeat: -1,
+      }
+    )
   })
 
   //@ts-ignore
@@ -84,15 +133,15 @@ const Home = ({ collections }: { collections: Array<string> }) => {
       ele.scrollTop = ele.scrollHeight / 2 - ele.clientHeight
     }
 
-    scrollMe()
+    canvasScroll()
     homeState.top = top
   }
 
-  const [pages, setPages] = useState(0)
+  // const [pages, setPages] = useState(0)
 
   return (
     <div className="relative">
-      <div ref={container} className="bg-home w-full h-full">
+      <div ref={container} className="bg-home w-full h-full canvas-container">
         <Canvas
           ref={canvas}
           dpr={[1, 2]}
@@ -100,7 +149,7 @@ const Home = ({ collections }: { collections: Array<string> }) => {
           style={{ height: "100vh" }}>
           <ambientLight intensity={0.4} />
           <Suspense fallback={null}>
-            <Content reflow={setPages} collections={collections} />
+            <Content collections={collections} />
           </Suspense>
         </Canvas>
 
@@ -108,7 +157,7 @@ const Home = ({ collections }: { collections: Array<string> }) => {
           <div
             className="scroll"
             style={{
-              height: `${(pages + 4) * 100}vh`,
+              height: `${5 * 100}vh`,
             }}
           />
         </div>
@@ -120,43 +169,49 @@ const Home = ({ collections }: { collections: Array<string> }) => {
           className=" bg-red-500 h-screen w-screen z-20 clippy"></div>
       </div>
 
-      <button className="absolute top-0 right-5 group" onClick={redirectAbout}>
-        <h4 className="text-white text-center font-dosis text-xl">About</h4>
-        <div className="w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition duration-500"></div>
-      </button>
+      <div className="absolute top-7 w-full flex flex-row justify-between z-20">
+        <button>
+          <img className="w-vw h-vw pl-7 " src="logo.png" alt="logo" />
+        </button>
 
-      <div className="collections absolute bottom-9 left-1/2 transform -translate-x-1/2 rotate-180 pointer-events-none">
-        <div>
-          <h2>Vita</h2>
-          <p>
-            Collection <br />
-            One
-          </p>
-        </div>
-        <div>
-          <h2>Treccia</h2>
-          <p>
-            Collection <br />
-            Two
-          </p>
-        </div>
-        <div>
-          <h2>Onde</h2>
-          <p>
-            Collection <br />
-            Three
-          </p>
-        </div>
-        <div>
-          <h2>Aria</h2>
-          <p>
-            Collection <br />
-            Four
-          </p>
-        </div>
+        <button className="pr-7 group btn-about" onClick={redirectAbout}>
+          <h4 className="text-white text-center font-dosis text-xl ">About</h4>
+          <div className="w-full h-0.25 bg-white transform scale-x-0 group-hover:scale-x-100 transition duration-500 origin-left"></div>
+        </button>
       </div>
 
-      <button onClick={redirectCollection}>
+      {/* <div className=""> */}
+      <div className="col-item">
+        <h2>Vita</h2>
+        <p>
+          Collection <br />
+          One
+        </p>
+      </div>
+      <div className="col-item">
+        <h2>Treccia</h2>
+        <p>
+          Collection <br />
+          Two
+        </p>
+      </div>
+      <div className="col-item">
+        <h2>Onde</h2>
+        <p>
+          Collection <br />
+          Three
+        </p>
+      </div>
+      <div className="col-item">
+        <h2>Aria</h2>
+        <p>
+          Collection <br />
+          Four
+        </p>
+      </div>
+      {/* </div> */}
+
+      <button className="" onClick={redirectCollection}>
         <Button />
       </button>
     </div>

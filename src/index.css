@@ -27,8 +27,50 @@
     overflow: auto;
   }
 
-  .collections h2,
-  .collections p {
+  .canvas-container::before,
+  .canvas-container::after {
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(201, 113, 100, 1) 0%,
+      rgba(201, 113, 100, 0) 100%
+    );
+    content: "";
+    position: absolute;
+    height: 25%;
+    width: 100%;
+    z-index: 10;
+  }
+
+  .canvas-container::before {
+    top: 0;
+    left: 0;
+  }
+
+  .canvas-container::after {
+    bottom: 0;
+    left: 0;
+    transform: rotateZ(180deg);
+  }
+
+  .col-item {
+    position: absolute;
+    top: -50vw;
+    left: 50%;
+    pointer-events: none;
+    transform: translateX(-50%) rotate(180deg);
+  }
+
+  .col-item:nth-of-type(4) {
+    margin-top: 7%;
+  }
+
+  .col-item:nth-of-type(7) {
+    margin-top: 5%;
+  }
+
+  .col-item h2,
+  .col-item p {
     writing-mode: vertical-rl;
     text-orientation: mixed;
     font-family: "Zen Kurenaido";
@@ -37,29 +79,34 @@
     color: white;
   }
 
-  .collections div {
+  .col-item div {
     margin-top: 40%;
+    background-color: red;
   }
 
-  .collections p {
+  .col-item p {
     font-size: 2vw;
     word-break: break-all;
     vertical-align: middle;
     margin-top: 15%;
     margin-left: 20%;
     text-align: center;
-    /* width: 1em;
-    height: 1em; */
   }
 
   .collection__btn {
     position: absolute;
-    bottom: 3%;
+    bottom: 4%;
     left: 50%;
 
+    width: 15vw;
+    height: 7.5vh;
+    z-index: 20;
     transform: translateX(-50%);
-    width: 20vw;
-    height: 10vh;
+  }
+
+  .btn-about h4 {
+    transform-origin: center;
+    transition: 0.4s linear;
   }
 
   .collection__btn:hover .hover-path {
@@ -67,9 +114,10 @@
     transition: 0.4s ease-in-out;
   }
 
-  .collection__btn:hover .button-text {
+  .collection__btn:hover .button-text,
+  .btn-about:hover h4 {
     transform: rotateX(360deg);
     transform-origin: center;
-    transition: transform 0.3s ease;
+    transition: transform 0.4s linear;
   }
 }

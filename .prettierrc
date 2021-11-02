@@ -3,7 +3,11 @@
   "bracketSameLine": true,
   "overrides": [
     {
-      "files": ["src/pages/home/scroll.ts", "src/utils/utils.ts"],
+      "files": [
+        "src/pages/home/scroll.ts",
+        "src/utils/utils.ts",
+        "src/pages/home/content.tsx"
+      ],
       "options": {
         "printWidth": 120
       }
