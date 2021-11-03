@@ -1,6 +1,13 @@
+import { Texture } from "three"
+
 const gallery: any = []
 const debugChunk: any = []
 const collectionItems: any = []
+
+const galleryStartPos: any = {}
+const galleryStartAddPos: any = {}
+const galleryEndPos: any = {}
+const galleryEndAddPos: any = {}
 
 export const homeState = {
 	top: 0,
@@ -17,15 +24,16 @@ export const homeState = {
 	gap: 0.5,
 	imgWidth: 3,
 	imgHeight: 4.238,
+	prevImgWidth: 0,
 
 	galleryHeight: 0,
 	gallery,
 	galleryHeightVH: 0,
+	galleryStartPos,
+	galleryStartAddPos,
+	galleryEndPos,
+	galleryEndAddPos,
 	debugChunk,
-	start: 0,
-	end: 0,
-	startAdd: 0,
-	endAdd: 0,
 
 	size: { width: 1909, height: 999 },
 	viewport: {
@@ -42,5 +50,6 @@ export const homeState = {
 	},
 	pxPerUnit: 65.096, //size.width/viewport.width
 	aspect: 1.413,
-	offsets: [0.6139, 1.3448, 1.9019, 2.2016, 2.5088], //shift position in every columns for more immersive exp
+
+	offsets: [0.351, -1.753, 0, 1.108, -0.961],
 }

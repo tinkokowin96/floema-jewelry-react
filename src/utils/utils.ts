@@ -8,37 +8,30 @@ export function clampPos(
 	img: any,
 	dirStateChange: boolean,
 	scrollDir: string,
-	isStartAlter = false
+	column: number
 ) {
 	if (dirStateChange && addedFromOut) {
 		if (scrollDir === "down") {
-			return round(homeState.end + position - homeState.startAdd, 4)
+			return round(homeState.galleryEndPos[column] + position - homeState.galleryStartAddPos[column], 4)
 		} else {
-			return round(homeState.start + position - homeState.endAdd, 4)
+			return round(homeState.galleryStartPos[column] + position - homeState.galleryEndAddPos[column], 4)
 		}
 	}
 
-	if (position > homeState.start + homeState.imgHeight / 2 && !addedFromOut) {
-		console.log("Out Triggered....")
+	if (position > homeState.galleryStartPos[column] + homeState.imgHeight / 2 && !addedFromOut) {
 		/*
-		from -> (position - homeState.start) we got scroll. Why we got
+		from -> (position - homeState.galleryStartPos[column]) we got scroll. Why we got
 		awkward positioning when we use homeState.scroll is as while doing the following
 		functin next scroll is in queue and we got difference scroll
 		*/
-		if (isStartAlter) {
-			return round(homeState.end + position - homeState.start, 4)
-		}
 		img.addedFromOut = true
-		return round(homeState.endAdd + position - homeState.start, 4)
+		return round(homeState.galleryEndAddPos[column] + position - homeState.galleryStartPos[column], 4)
 	}
-	if (position < homeState.end - homeState.imgHeight / 2 && !addedFromOut) {
-		if (isStartAlter) {
-			return round(homeState.start + position - homeState.end, 4)
-		}
+	if (position < homeState.galleryEndPos[column] - homeState.imgHeight / 2 && !addedFromOut) {
 		img.addedFromOut = true
-		return round(homeState.startAdd + position - homeState.end, 4)
+		return round(homeState.galleryStartAddPos[column] + position - homeState.galleryEndPos[column], 4)
 	}
-	if (position <= homeState.start && position >= homeState.end) {
+	if (position <= homeState.galleryStartPos[column] && position >= homeState.galleryEndPos[column]) {
 		img.addedFromOut = false
 		return position
 	} else {
@@ -54,8 +47,6 @@ export const canvasScroll = () => {
 		// homeState.debugChunk.forEach((img: any, ind: number) => {
 		if (homeState.scrollDir !== homeState.prevScrollDir) {
 			dirStateChange = true
-		} else {
-			dirStateChange = false
 		}
 
 		if (homeState.scroll < -3 || homeState.scroll > 3) {
@@ -68,7 +59,8 @@ export const canvasScroll = () => {
 			img.addedFromOut,
 			img,
 			dirStateChange,
-			homeState.scrollDir
+			homeState.scrollDir,
+			img.column
 		)
 		img.position.setY(scrolled)
 		prevScroll = homeState.scroll

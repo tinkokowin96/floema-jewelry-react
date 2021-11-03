@@ -10,7 +10,15 @@ FIXME:
   to fix awkward position after scroll and resize...
 */
 
-const Content = ({ collections }: { collections: Array<string> }) => {
+const Content = ({
+  // reflow,
+  collections,
+}: {
+  // reflow: React.Dispatch<SetStateAction<number>>
+  collections: Array<string>
+}) => {
+  console.log("Again.....")
+
   const group = useRef<GroupProps>(null)
 
   const { viewport, size } = useThree()
@@ -34,16 +42,18 @@ const Content = ({ collections }: { collections: Array<string> }) => {
 
   const gapX = homeState.gap + imgWidth
   const gapY = homeState.gap + imgHeight
-
   const textures = useLoader(TextureLoader, collections)
+
   const numColumn = Math.ceil(textures.length / homeState.numColumn)
   const columns = chunk(textures, numColumn)
   const lastColumn = last(columns)
-  if (lastColumn?.length !== columns[0].length) {
+  //@ts-ignore
+  if (lastColumn.length !== columns[0].length) {
     //@ts-ignore
     const imgRequired = columns[0].length - lastColumn?.length
     const imgs = take(columns[0], imgRequired)
-    const conArr = lastColumn?.concat(imgs)
+    //@ts-ignore
+    const conArr = lastColumn.concat(imgs)
     columns.pop()
     //@ts-ignore
     columns.push(conArr)
@@ -60,66 +70,79 @@ const Content = ({ collections }: { collections: Array<string> }) => {
   const gallery: any = []
 
   useEffect(() => {
-    // console.log("rerendered....")
-    //@ts-ignore
-    if (group.current?.children.length > 1) {
-      // console.log("Hiii....", group.current.children)
-      //@ts-ignore
-      homeState.numImgInColumn = group.current.children[0].children.length
-      //@ts-ignore
-
-      group.current.children.forEach((mesh_group) => {
-        mesh_group.children.forEach((mesh: any) => {
-          for (let i = 0; i < homeState.numImgInColumn; i++) {
-            if (!mesh["addedFromOut"]) {
+    if (homeState.prevImgWidth !== imgWidth) {
+      if (group.current) {
+        //@ts-ignore
+        homeState.numImgInColumn = group.current.children[0].children.length
+        //@ts-ignore
+        group.current.children.forEach((mesh_group, ind) => {
+          mesh_group.children.forEach((mesh: any) => {
+            for (let i = 0; i < homeState.numImgInColumn; i++) {
               mesh["addedFromOut"] = false
             }
-          }
-          gallery.push(mesh)
+            gallery.push(mesh)
+          })
         })
-      })
-      homeState.gallery = gallery
-    }
+        homeState.gallery = gallery
+      }
 
-    if (!homeState.altered) {
       for (let i = 0; i < gallery.length; i += homeState.numColumn) {
         gallery[i + homeState.numImgInColumn - 1].position.y = homeState.imgHeight
-      }
-    }
 
-    if (!homeState.altered) {
+        /* TODO: find out why every first position of columns don't reset on rerender and
+        fix postioning like the following without particular reason(reseting to ori pos as
+        don't reset automatically only for first img of the column...)
+        */
+        gallery[i].position.y = -homeState.gap
+      }
+
+      console.log("Renewed..", gallery[5].position.y, gallery[6].position.y)
+
       for (let i = 0; i < homeState.numColumn; i++) {
-        homeState.start = gallery[homeState.numImgInColumn - 1].position.y
-        homeState.startAdd = round(homeState.start + homeState.gap + homeState.imgHeight, 4)
-        homeState.end = gallery[homeState.numImgInColumn - 2].position.y
-        homeState.endAdd = round(homeState.end - homeState.gap - homeState.imgHeight, 4)
+        homeState.galleryStartPos[i] = 0
+        homeState.galleryStartAddPos[i] = 0
+        homeState.galleryEndPos[i] = 0
+        homeState.galleryEndAddPos[i] = 0
       }
-    }
 
-    for (let i = 0; i < homeState.numColumn; i++) {
-      const scroll = -round(homeState.offsets[i] * homeState.imgHeight, 4)
-      if (!homeState.altered) {
+      for (let i = 0; i < homeState.numColumn; i++) {
+        for (let j = 0; j < homeState.numImgInColumn; j++) {
+          gallery[i * homeState.numImgInColumn + j]["column"] = i
+        }
+      }
+
+      for (let i = 0; i < homeState.numColumn; i++) {
+        const scroll = homeState.offsets[i]
+        console.log("changed...")
         for (let j = 0; j < homeState.numImgInColumn; j++) {
           const scrolled = round(gallery[i * homeState.numImgInColumn + j].position.y + scroll, 4)
+          console.log(j, "position now...", gallery[i * homeState.numImgInColumn + j].position.y, "changed..", scrolled)
 
-          if (scrolled < homeState.end - homeState.imgHeight / 2) {
-            const position = round(homeState.startAdd + scrolled - homeState.end, 4)
-            gallery[i * homeState.numImgInColumn + j].position.setY(position)
-            gallery[i * homeState.numImgInColumn + j]["addedFromOut"] = true
-          } else {
-            gallery[i * homeState.numImgInColumn + j].position.setY(scrolled)
+          gallery[i * homeState.numImgInColumn + j].position.setY(scrolled)
+
+          if (j === homeState.numImgInColumn - 1) {
+            homeState.galleryStartPos[i] = round(gallery[i * homeState.numImgInColumn + j].position.y + scroll, 4)
+            homeState.galleryStartAddPos[i] = round(
+              homeState.galleryStartPos[i] + homeState.gap + homeState.imgHeight,
+              4
+            )
+          }
+
+          if (j === homeState.numImgInColumn - 2) {
+            homeState.galleryEndPos[i] = round(gallery[i * homeState.numImgInColumn + j].position.y + scroll, 4)
+            homeState.galleryEndAddPos[i] = round(homeState.galleryEndPos[i] - homeState.gap - homeState.imgHeight, 4)
           }
         }
       }
+      homeState.debugChunk = chunk(gallery, 5)[0]
     }
-    homeState.debugChunk = chunk(gallery, 5)[0]
-    homeState.altered = !homeState.altered
-    console.log(homeState.start, homeState.startAdd, homeState.end, homeState.endAdd)
+    homeState.prevImgWidth = imgWidth
   })
 
   useFrame(() => {
     // homeState.scroll = 0.03
     // canvasScroll()
+    // elementScroll()
   })
 
   return (
@@ -140,7 +163,7 @@ const Content = ({ collections }: { collections: Array<string> }) => {
               return (
                 <mesh key={`col_${col_ind}_tex_${tex_ind}`} position={[0, -meshGap, 0]}>
                   <planeBufferGeometry args={[imgWidth, imgHeight]} />
-                  <meshBasicMaterial map={tex} toneMapped={false} transparent opacity={homeState.altered ? 0.4 : 0.4} />
+                  <meshBasicMaterial map={tex} toneMapped={false} transparent opacity={0.4} />
                 </mesh>
               )
             })}
