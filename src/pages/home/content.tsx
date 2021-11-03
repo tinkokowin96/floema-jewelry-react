@@ -2,6 +2,7 @@ import { GroupProps, useFrame, useLoader, useThree } from "@react-three/fiber"
 import { chunk, last, round, take } from "lodash"
 import { useRef, useEffect } from "react"
 import { TextureLoader } from "three"
+import { canvasScroll } from "../../utils/utils"
 // import { canvasScroll, elementScroll } from "../../utils/utils"
 import { homeState } from "./home.state"
 
@@ -59,19 +60,13 @@ const Content = ({
     columns.push(conArr)
   }
 
-  homeState.galleryHeight = round(
-    ((imgHeight + homeState.gap) * (columns[0].length - 1) + homeState.gap) * homeState.pxPerUnit,
-    4
-  )
-  homeState.page = homeState.galleryHeight / size.height
-  const galleryHeightVH = homeState.galleryHeight / homeState.pxPerUnit
-  homeState.galleryHeightVH = galleryHeightVH
-
   const gallery: any = []
 
   useEffect(() => {
     if (homeState.prevImgWidth !== imgWidth) {
       if (group.current) {
+        //@ts-ignore
+        console.log(group.current.children[0].children[0].position.y)
         //@ts-ignore
         homeState.numImgInColumn = group.current.children[0].children.length
         //@ts-ignore
@@ -86,7 +81,7 @@ const Content = ({
         homeState.gallery = gallery
       }
 
-      for (let i = 0; i < gallery.length; i += homeState.numColumn) {
+      for (let i = 0; i < gallery.length; i += homeState.numImgInColumn) {
         gallery[i + homeState.numImgInColumn - 1].position.y = homeState.imgHeight
 
         /* TODO: find out why every first position of columns don't reset on rerender and
@@ -95,8 +90,6 @@ const Content = ({
         */
         gallery[i].position.y = -homeState.gap
       }
-
-      console.log("Renewed..", gallery[5].position.y, gallery[6].position.y)
 
       for (let i = 0; i < homeState.numColumn; i++) {
         homeState.galleryStartPos[i] = 0
@@ -113,11 +106,8 @@ const Content = ({
 
       for (let i = 0; i < homeState.numColumn; i++) {
         const scroll = homeState.offsets[i]
-        console.log("changed...")
         for (let j = 0; j < homeState.numImgInColumn; j++) {
           const scrolled = round(gallery[i * homeState.numImgInColumn + j].position.y + scroll, 4)
-          console.log(j, "position now...", gallery[i * homeState.numImgInColumn + j].position.y, "changed..", scrolled)
-
           gallery[i * homeState.numImgInColumn + j].position.setY(scrolled)
 
           if (j === homeState.numImgInColumn - 1) {
@@ -140,9 +130,8 @@ const Content = ({
   })
 
   useFrame(() => {
-    // homeState.scroll = 0.03
+    // homeState.scroll = 0.018
     // canvasScroll()
-    // elementScroll()
   })
 
   return (

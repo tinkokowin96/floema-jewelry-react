@@ -1,7 +1,7 @@
 import { Canvas } from "@react-three/fiber"
 import gsap, { Power3 } from "gsap"
 import { round } from "lodash"
-import React, { Suspense, useEffect, useRef, useState } from "react"
+import React, { Suspense, useEffect, useRef } from "react"
 import { useHistory } from "react-router"
 import Button from "../../assets/button.svg"
 import { canvasScroll } from "../../utils/utils"

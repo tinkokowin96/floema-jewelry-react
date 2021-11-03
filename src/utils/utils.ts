@@ -18,7 +18,7 @@ export function clampPos(
 		}
 	}
 
-	if (position > homeState.galleryStartPos[column] + homeState.imgHeight / 2 && !addedFromOut) {
+	if (position > homeState.galleryStartPos[column] + homeState.imgHeight && !addedFromOut) {
 		/*
 		from -> (position - homeState.galleryStartPos[column]) we got scroll. Why we got
 		awkward positioning when we use homeState.scroll is as while doing the following
@@ -27,7 +27,7 @@ export function clampPos(
 		img.addedFromOut = true
 		return round(homeState.galleryEndAddPos[column] + position - homeState.galleryStartPos[column], 4)
 	}
-	if (position < homeState.galleryEndPos[column] - homeState.imgHeight / 2 && !addedFromOut) {
+	if (position < homeState.galleryEndPos[column] - homeState.imgHeight && !addedFromOut) {
 		img.addedFromOut = true
 		return round(homeState.galleryStartAddPos[column] + position - homeState.galleryEndPos[column], 4)
 	}

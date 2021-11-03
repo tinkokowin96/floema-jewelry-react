@@ -1,5 +1,3 @@
-import { Texture } from "three"
-
 const gallery: any = []
 const debugChunk: any = []
 const collectionItems: any = []
@@ -17,7 +15,6 @@ export const homeState = {
 	altered: false,
 	collectionItems,
 
-	page: 0,
 	numColumn: 5,
 	numImgInColumn: 0,
 	scale: 1,
@@ -26,9 +23,7 @@ export const homeState = {
 	imgHeight: 4.238,
 	prevImgWidth: 0,
 
-	galleryHeight: 0,
 	gallery,
-	galleryHeightVH: 0,
 	galleryStartPos,
 	galleryStartAddPos,
 	galleryEndPos,
